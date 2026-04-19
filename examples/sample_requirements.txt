@@ -14,7 +14,7 @@ sqlalchemy~=1.4.46
 pydantic>=1.10.0,<2.0.0
 
 # Cryptography
-cryptography==41.0.0
+cryptography==46.0.5
 
 # Environment variable management
 python-dotenv>=1.0.0

@@ -365,8 +365,7 @@ class GitHubScanner:
             last_updated = self._get_last_commit_date(item.path)
             for dep in deps:
                 if last_updated:
-                    # Store as a custom attribute (not in dataclass schema)
-                    dep.__dict__.setdefault("last_updated", last_updated)
+                    dep.last_updated = last_updated
 
             result.dependencies.extend(deps)
 

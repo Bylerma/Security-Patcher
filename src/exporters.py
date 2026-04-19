@@ -44,7 +44,7 @@ def to_dict(scan_result: Union[ScanResult, dict]) -> dict:
 
 def to_json(scan_result: Union[ScanResult, dict], indent: int = 2) -> str:
     """
-    Serialise *scan_result* to a JSON string.
+    Serialize *scan_result* to a JSON string.
 
     Parameters
     ----------
@@ -63,7 +63,7 @@ def to_json(scan_result: Union[ScanResult, dict], indent: int = 2) -> str:
 
 def to_csv(scan_result: Union[ScanResult, dict]) -> str:
     """
-    Serialise *scan_result* dependencies to a CSV string.
+    Serialize *scan_result* dependencies to a CSV string.
 
     The CSV has the following columns::
 

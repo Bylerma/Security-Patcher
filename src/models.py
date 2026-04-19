@@ -11,7 +11,7 @@ ScanResult
     Aggregates the results of scanning a repository: the list of discovered
     manifest files, all extracted dependencies, and any errors encountered.
 
-Both classes provide serialisation helpers (to_dict, to_json, to_csv).
+Both classes provide serialization helpers (to_dict, to_json, to_csv).
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ import io
 import json
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
@@ -56,9 +56,10 @@ class Dependency:
     source_file: str
     line_number: int = 0
     specifier: str = ""
+    last_updated: Optional[datetime] = None
 
     # ------------------------------------------------------------------
-    # Serialisation helpers
+    # Serialization helpers
     # ------------------------------------------------------------------
 
     def to_dict(self) -> dict:
@@ -70,6 +71,7 @@ class Dependency:
             "source_file": self.source_file,
             "line_number": self.line_number,
             "specifier": self.specifier,
+            "last_updated": self.last_updated.isoformat() if self.last_updated else None,
         }
 
     def to_json(self, indent: int = 2) -> str:
@@ -79,6 +81,7 @@ class Dependency:
     @classmethod
     def from_dict(cls, data: dict) -> "Dependency":
         """Reconstruct a :class:`Dependency` from a plain dict."""
+        last_updated_raw = data.get("last_updated")
         return cls(
             name=data["name"],
             version=data.get("version", ""),
@@ -86,6 +89,7 @@ class Dependency:
             source_file=data.get("source_file", ""),
             line_number=int(data.get("line_number", 0)),
             specifier=data.get("specifier", ""),
+            last_updated=datetime.fromisoformat(last_updated_raw) if last_updated_raw else None,
         )
 
 
@@ -125,7 +129,7 @@ class ScanResult:
         return len(self.dependencies)
 
     # ------------------------------------------------------------------
-    # Serialisation helpers
+    # Serialization helpers
     # ------------------------------------------------------------------
 
     def to_dict(self) -> dict:
@@ -147,11 +151,11 @@ class ScanResult:
         """
         Return a CSV string with one row per dependency.
 
-        Columns: name, version, type, source_file, line_number, specifier
+        Columns: name, version, type, source_file, line_number, specifier, last_updated
         """
         output = io.StringIO()
-        fieldnames = ["name", "version", "type", "source_file", "line_number", "specifier"]
-        writer = csv.DictWriter(output, fieldnames=fieldnames)
+        fieldnames = ["name", "version", "type", "source_file", "line_number", "specifier", "last_updated"]
+        writer = csv.DictWriter(output, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         for dep in self.dependencies:
             writer.writerow(dep.to_dict())
